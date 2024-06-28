@@ -13,7 +13,7 @@ Stop phishing
 ## Phishkiller usage
 Run 
 ```
-python phishkiller.py
+python3 phishkiller.py
  ```
  Then paste the url of the target
 
