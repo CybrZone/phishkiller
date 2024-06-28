@@ -1,0 +1,22 @@
+{
+    "url": "http://clicksign.littlevong.com", // i could not get the url from the video
+    "num_threads": 50,
+    "users": [
+      "alice", "bob", "charlie", "dave", "eve", "fred", "george",
+      "harry", "ivan", "james", "kyle", "larry", "mike", "noah", "oliver", "peter",
+      "quincy", "ricky", "samuel", "tom", "ulysses", "victor", "wesley", "xavier",
+      "yusuf", "zachary"
+    ],
+    "password_length": 8,
+    "domain": [
+        "@icloud.com",
+        "@outlook.com",
+        "@yahoo.com",
+        "@gmail.com",
+        "@mail.com"
+        
+    ],
+    "email_key": "a",
+    "password_key": "az"
+  }
+  
