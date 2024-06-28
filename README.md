@@ -11,6 +11,10 @@ Stop phishing
 
 
 ## Phishkiller usage
+```bash
+pip install faker
+```
+
 Run 
 ```
 python3 phishkiller.py
