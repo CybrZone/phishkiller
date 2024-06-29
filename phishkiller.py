@@ -70,7 +70,7 @@ def generate_random_password(max_len: int = 50) -> str:
 
 
 def send_posts(url, location):
-    global user_agents
+    global USER_AGENTS
     while True:
         emails = generate_random_emails()
         for email in emails:
