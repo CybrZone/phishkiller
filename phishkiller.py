@@ -15,8 +15,6 @@ for _ in range(1000):
     name = name.replace(" ", "")
     generated_names.append(name)
 
-print(generated_names)
-
 domains = ["outlook.com", "gmail.com", "yahoo.com", "mail.ru"]
 
 def generate_random_email():
