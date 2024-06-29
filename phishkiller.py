@@ -10,9 +10,12 @@ names = ["alice", "bob", "charlie", "dave", "eve" "fred", "george",
           "yusuf", "zachary",
           ]
 
+domains = ["@gmail.com", "@outlook.com", "@hotmail.com", "yahoo.com", "aol.com", "live.com",
+          ]
+
 def generate_random_email():
     name = random.choice(names)
-    domain = "@gmail.com"  # You can change this domain
+    domain = random.choice(domains)
     return name + str(random.randint(1, 100)) + domain
 
 def generate_random_password():
