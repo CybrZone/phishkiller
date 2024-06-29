@@ -3,17 +3,26 @@ import requests
 import random
 import string
 
+import names
+
 # List of names to generate email addresses
-names = ["alice", "bob", "charlie", "dave", "eve" "fred", "george",
-          "harry", "ivan", "james", "kyle", "larry", "mike", "noah", "oliver", "peter", 
-          "quincy", "ricky", "samuel", "tom", "ulysses", "victor", "wesley", "xavier", 
-          "yusuf", "zachary",
-          ]
+generated_names = []
+
+# Generate a list of random names.
+
+for _ in range(1000):
+    name = names.get_first_name().lower() + names.get_last_name().lower()
+    name = name.replace(" ", "")
+    generated_names.append(name)
+
+print(generated_names)
+
+domains = ["outlook.com", "gmail.com", "yahoo.com", "mail.ru"]
 
 def generate_random_email():
-    name = random.choice(names)
-    domain = "@gmail.com"  # You can change this domain
-    return name + str(random.randint(1, 100)) + domain
+    name = random.choice(generated_names)
+    domain = random.choice(domains)  # You can change this domain
+    return name + str(random.randint(1, 100)) + "@" + domain
 
 def generate_random_password():
     # Generate a random password of length 8
@@ -30,6 +39,12 @@ def send_posts(url):
         }
         response = requests.post(url, data=data)
         print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}")
+
+def mock_send():
+    for _ in range(200):
+        email = generate_random_email()
+        password = generate_random_password()
+        print(f"Email: {email}, Password: {password}")
 
 def main():
     # Ask user for URL to flood
