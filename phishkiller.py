@@ -3,6 +3,12 @@ import requests
 import random
 import string
 import names
+import subprocess
+
+from fake_useragent import UserAgent
+
+
+
 
 def name_gen():#Generates a random name for the email
     name_system = random.choice(["FullName", "FullFirstFirstInitial", "FirstInitialFullLast"])
@@ -31,8 +37,11 @@ def send_posts(url):
         email = generate_random_email()
         password = generate_random_password()
         data = {"a": email, "az": password}
-        response = requests.post(url, data=data)
-        print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}")
+        ua = UserAgent()
+        user_agent = ua.random
+        headers = {'User-Agent': user_agent}
+        response = requests.post(url, data=data, headers=headers,)
+        print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}, headers: {user_agent}")
 
 def main():
     url = input("Enter the URL of the target you want to flood: ")
