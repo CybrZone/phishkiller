@@ -17,5 +17,10 @@ python3 phishkiller.py
  ```
  Then paste the url of the target
 
+
+ ## To Do List
+
+ - Proxy (rotate IP address)
+
  ### Disclaimer
 **Note:** This script should be used responsibly and only on systems you have explicit permission to test against.
