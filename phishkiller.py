@@ -16,8 +16,12 @@ def name_gen():#Generates a random name for the email
 
 def generate_random_email():
     name = name_gen()
+    NumberOrNo=random.choice(["Number", "No"])
     domain = random.choice(["@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com"])#Popular email providers
-    return name + str(random.randint(1, 100)) + domain
+    if NumberOrNo == "Number":
+        return name + str(random.randint(1, 100)) + domain
+    else:
+        return name + domain
 
 def generate_random_password():
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
