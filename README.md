@@ -1,26 +1,51 @@
 # Phishkiller
 
 ## Overview
-This script is designed to combat phishing attacks by flooding phisher databases with false information by flooding attacker database.
 
-## How It Works
-Using multi-threading, the script generates random email addresses and passwords from a predefined list of names. Each thread independently sends POST requests to a specified URL, submitting fictitious data to overwhelm phisher databases. This proactive approach aims to dilute and disrupt the accuracy of stolen data, offering a layer of protection to potential victims.
+PhishKiller is a Python script designed to flood phishing website's databases with fake login data to disrupt their malicious activities.
+
+## How It Works - Features
+
+- Generates random email addresses and passwords.
+- Uses asynchronous requests for high performance.
+- Randomizes User-Agent headers to avoid detection.
+- Structured logging for monitoring activities.
+- Handles errors gracefully.
 
 ## Purpose
-Stop phishing
+Providing easy access to a script any whitehat can use to stop phishing.
 
+## Installation
+1. Clone the Repository:
+```
+git clone https://github.com/YOUR_USERNAME/phishkiller.git
+cd phishkiller
+```
+2. Install dependencies using **pip**:
+```
+pip install -r requirements.txt
+```
 
 ## Phishkiller usage
-Run 
+
+1. **Run** 
 ```
 python3 phishkiller.py
  ```
- Then paste the url of the target
+2. Follow the prompts to enter the URL of the phishing link you want to target and the number of POST requests to send.
+3. Monitor the console/terminal for logging messages that track the script's progress and status.
 
+The script uses structured logging with timestamps (%(asctime)s), log levels (%(levelname)s), and messages (%(message)s). Logs are output in the console to track each POST request's status and details.
 
- ## To Do List
+## To Do List
 
  - Proxy (rotate IP address)
 
+## Contributing
+
+Contributions are welcome! If you find bugs or want to add features, please fork the repository and submit a pull request.
+
  ### Disclaimer
-**Note:** This script should be used responsibly and only on systems you have explicit permission to test against.
+**Note:** This script should be used responsibly and only on systems you have explicit permission to test against (controlled environment). 
+
+*A testserver `pytestserver.py` has been made available to simulate a real phishing page to test the script*
