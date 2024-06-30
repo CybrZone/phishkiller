@@ -35,7 +35,7 @@ python3 phishkiller.py
 2. Follow the prompts to enter the URL of the phishing link you want to target and the number of POST requests to send.
 3. Monitor the console/terminal for logging messages that track the script's progress and status.
 
-> The script uses structured logging with timestamps (%(asctime)s), log levels (%(levelname)s), and messages (%(message)s). Logs are output in the console to track each POST request's status and details.
+> The script uses structured logging with timestamps `(%(asctime)s)`, log levels `(%(levelname)s)`, and messages `(%(message)s)`. Logs are output in the console to track each POST request's status and details.
 
 ## To Do List
 
@@ -48,4 +48,4 @@ Contributions are welcome! If you find bugs or want to add features, please fork
  ### Disclaimer
 **Note:** This script should be used responsibly and only on systems you have explicit permission to test against (controlled environment). 
 
-*A testserver `pytestserver.py` has been made available to simulate a real phishing page to test the script*
+> *A testserver `pytestserver.py` has been made available to simulate a real phishing page to test the script*
