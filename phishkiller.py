@@ -38,7 +38,7 @@ def send_posts(url,email_domains,word_list):
 def main():
     url = input("Enter the URL of the target you want to flood: ")
     with open("domains.json") as f:
-        email_domains = json.load(f)  # random email domain, weighted by number of users in millions
+        email_domains = json.load(f)
     with open("words.json") as f:
         word_list = json.load(f)  # word list from https://www.mit.edu/~ecprice/wordlist.10000
     threads = [threading.Thread(target=send_posts, args=(url,email_domains,word_list), daemon=True) for _ in range(25)]
