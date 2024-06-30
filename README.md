@@ -18,7 +18,7 @@ Providing easy access to a script any whitehat can use to stop phishing.
 ## Installation
 1. Clone the Repository:
 ```
-git clone https://github.com/YOUR_USERNAME/phishkiller.git
+git clone https://github.com/musprodev/phishkiller.git
 cd phishkiller
 ```
 2. Install dependencies using **pip**:
