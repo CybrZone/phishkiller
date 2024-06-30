@@ -9,18 +9,19 @@ Using multi-threading, the script generates random email addresses and passwords
 ## Purpose
 Stop phishing
 
-
 ## Phishkiller usage
 Run 
 ```
-python3 phishkiller.py
+pip install -r requirements.txt
+
+python3 phishkiller.py --url {url} --threads {int}
  ```
- Then paste the url of the target
-
-
  ## To Do List
 
  - Proxy (rotate IP address)
+ - Logging
+ - Input sanitization
+ - Add Python Docstrings
 
  ### Disclaimer
 **Note:** This script should be used responsibly and only on systems you have explicit permission to test against.
