@@ -5,8 +5,11 @@ import string
 import names
 import subprocess
 import argparse
+import logging
 from fake_useragent import UserAgent
 
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def name_gen():
     """
@@ -24,7 +27,25 @@ def name_gen():
         return first_name + last_name[0]
     return first_name[0] + last_name#JDoe
 
-def generate_random_email():
+def load_domains(file_path):
+    """
+    Loads domains from a specified file.
+
+    Args:
+        file_path (str): The path to the file containing domains.
+
+    Returns:
+        list: A list of domains read from the file.
+    """
+    try:
+        with open(file_path, 'r') as file:
+            domains = [line.strip() for line in file if line.strip()]
+        return domains
+    except IOError:
+        logging.error(f"Failed to read domains from {file_path}")
+        return []
+    
+def generate_random_email(domains):
     """
     Generates a random email address.
 
@@ -33,7 +54,7 @@ def generate_random_email():
     """
     name = name_gen()
     NumberOrNo=random.choice(["Number", "No"])
-    domain = random.choice(["@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com"])#Popular email providers
+    domain = random.choice(domains)
     if NumberOrNo == "Number":
         return name + str(random.randint(1, 100)) + domain
     else:
