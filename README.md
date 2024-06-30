@@ -21,7 +21,6 @@ python3 phishkiller.py --url {url} --threads {int}
  - Proxy (rotate IP address)
  - Logging
  - Input sanitization
- - Add Python Docstrings
 
  ### Disclaimer
 **Note:** This script should be used responsibly and only on systems you have explicit permission to test against.
