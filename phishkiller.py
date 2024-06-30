@@ -4,10 +4,11 @@ import random
 import string
 import names
 import subprocess
+import json
 
 from fake_useragent import UserAgent
 
-
+from email_gen import generate_random_email
 
 
 def name_gen():#Generates a random name for the email
@@ -20,21 +21,12 @@ def name_gen():#Generates a random name for the email
         return first_name + last_name[0]
     return first_name[0] + last_name#JDoe
 
-def generate_random_email():
-    name = name_gen()
-    NumberOrNo=random.choice(["Number", "No"])
-    domain = random.choice(["@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com"])#Popular email providers
-    if NumberOrNo == "Number":
-        return name + str(random.randint(1, 100)) + domain
-    else:
-        return name + domain
-
 def generate_random_password():
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
 
-def send_posts(url):
+def send_posts(url,email_domains,word_list):
     while True:
-        email = generate_random_email()
+        email = generate_random_email(email_domains,word_list)
         password = generate_random_password()
         data = {"a": email, "az": password}
         ua = UserAgent()
@@ -45,7 +37,11 @@ def send_posts(url):
 
 def main():
     url = input("Enter the URL of the target you want to flood: ")
-    threads = [threading.Thread(target=send_posts, args=(url,), daemon=True) for _ in range(25)]
+    with open("domains.json") as f:
+        email_domains = json.load(f)  # random email domain, weighted by number of users in millions
+    with open("words.json") as f:
+        word_list = json.load(f)  # word list from https://www.mit.edu/~ecprice/wordlist.10000
+    threads = [threading.Thread(target=send_posts, args=(url,email_domains,word_list), daemon=True) for _ in range(25)]
 
     for t in threads:
         t.start()
