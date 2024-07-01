@@ -1,0 +1,8 @@
+threading
+requests
+random
+string
+names
+subprocess
+argparse
+fake-useragent
