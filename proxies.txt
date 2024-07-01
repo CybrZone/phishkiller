@@ -1,0 +1,27 @@
+154.203.132.49	8090	1 min ago	2235 ms	43% (7)	sc Seychelles	Elite
+116.63.129.202	6000	1 min ago	1563 ms	86% (7)	cn China	Elite
+189.240.60.166	9090	1 min ago	3108 ms	54% (13)	mx Mexico - Mexico City	Elite
+47.96.176.130	59394	1 min ago	960 ms	23% (9)	cn China - Hangzhou	Elite
+20.205.61.143	8123	1 min ago	2020 ms	84% (6)	hk Hong Kong - Hong Kong	Elite
+64.227.4.244	8888	1 min ago	85 ms	50% (16)	us United States - North Bergen	Elite
+185.241.149.164	8080	1 min ago	487 ms	28% (11)	us United States - Dallas	Elite
+20.24.43.214	80	1 min ago	1084 ms	78% (9)	sg Singapore - Singapore	Elite
+20.206.106.192	80	1 min ago	1268 ms	84% (6)	br Brazil - Campinas	Elite
+3.78.92.159	80	1 min ago	241 ms	88% (8)	de Germany - Frankfurt am Main	Elite
+13.38.176.104	3128	1 min ago	190 ms	88% (8)	fr France - Paris	Elite
+3.123.150.192	3128	1 min ago	237 ms	86% (7)	de Germany - Frankfurt am Main	Elite
+3.37.125.76	3128	1 min ago	390 ms	72% (7)	kr South Korea - Incheon	Elite
+154.16.146.44	80	1 min ago	395 ms	50% (2)	us United States - Buffalo	Elite
+154.203.132.49	8080	2 mins ago	1383 ms	59% (12)	sc Seychelles	Elite
+109.110.162.8	80	2 mins ago	1136 ms	100% (12)	hk Hong Kong - Ha Kwai Chung	Elite
+39.109.113.97	3128	2 mins ago	3257 ms	50% (8)	hk Hong Kong	Elite
+189.240.60.164	9090	2 mins ago	2420 ms	67% (6)	mx Mexico - Benito Juarez	Elite
+24.240.126.108	80	2 mins ago	1145 ms	78% (9)	au Australia - Melbourne	Elite
+111.160.204.146	9091	2 mins ago	1496 ms	54% (13)	cn China	Elite
+125.77.25.178	8090	2 mins ago	1940 ms	88% (8)	cn China - Fuzhou	Elite
+189.240.60.163	9090	2 mins ago	2493 ms	56% (9)	mx Mexico - Mexico City	Elite
+3.126.147.182	80	2 mins ago	228 ms	80% (10)	de Germany - Frankfurt am Main	Elite
+189.240.60.171	9090	2 mins ago	2201 ms	56% (9)	mx Mexico - Mexico City	Elite
+154.203.132.55	8080	3 mins ago	4105 ms	60% (5)	sc Seychelles	Elite
+3.21.101.158	3128	3 mins ago	137 ms	86% (7)	us United States - Columbus	Elite
+3.127.121.101	80	3 mins ago	190 ms	89% (9)	de Germany - Frankfurt am Main	Elite
