@@ -1,5 +1,5 @@
 {
-    "url": "http://clicksign.littlevong.com", // i could not get the url from the video
+    "url":"http://clicksign.littlevong.com", 
     "num_threads": 50,
     "users": [
       "alice", "bob", "charlie", "dave", "eve", "fred", "george",

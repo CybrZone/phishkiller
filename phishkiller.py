@@ -3,36 +3,49 @@ import requests
 import random
 import string
 import json
+from tqdm import tqdm
+import itertools
 
 # Load configuration from config.json
-def load_config():
-    with open('config.json', 'r') as file:
-        config = json.load(file)
-    return config
+def load_config(config_file="./config.json"):
+    try:
+        with open(config_file, 'r') as file:
+            config = json.load(file)
+        return config
+    except FileNotFoundError:
+        print("Configuration file not found.")
+        raise
+    except json.JSONDecodeError:
+        print("Error decoding the configuration file.")
+        raise
 
-# Generate random email using names and domains from the config file
+# Generate a random email using names and domains from the config file
 def generate_random_email(names, domains):
     name = random.choice(names)
     domain = random.choice(domains)
-    return name + str(random.randint(1, 100)) + domain
+    return f"{name}{random.randint(1, 100)}{domain}"
 
-# Generate random password of given length
+# Generate a random password of a given length
 def generate_random_password(length):
-    letters_and_digits = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters_and_digits) for _ in range(length))
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
 
 # Send POST requests continuously
-def send_posts(url, names, domains, password_length, email_key, password_key):
+def send_posts(url, names, domains, password_length, email_key, password_key, progress_bar):
     with requests.Session() as session:
-        while True:
+        for _ in progress_bar:
             email = generate_random_email(names, domains)
             password = generate_random_password(password_length)
             data = {
                 email_key: email,
                 password_key: password
             }
-            response = session.post(url, data=data)
-            print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}")
+            try:
+                response = session.post(url, data=data)
+                progress_bar.set_postfix(email=email, status_code=response.status_code)
+            except requests.RequestException as e:
+                progress_bar.set_postfix(error=str(e))
+            progress_bar.update(1)
 
 def main():
     # Load configuration
@@ -45,10 +58,19 @@ def main():
     email_key = config['email_key']
     password_key = config['password_key']
 
+    # Determine the total number of requests to be sent (for progress bar)
+    total_requests = config.get('total_requests', 1000)  # Default to 1000 if not specified
+
     # Use ThreadPoolExecutor to manage threads
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
-        futures = [executor.submit(send_posts, url, names, domains, password_length, email_key, password_key) for _ in range(num_threads)]
-        concurrent.futures.wait(futures)
+        # Create a single progress bar for all threads
+        with tqdm(total=total_requests, desc="Sending POST requests") as progress_bar:
+            progress_bars = itertools.cycle([progress_bar])
+            futures = [
+                executor.submit(send_posts, url, names, domains, password_length, email_key, password_key, progress_bar)
+                for progress_bar in itertools.islice(progress_bars, num_threads)
+            ]
+            concurrent.futures.wait(futures)
 
 if __name__ == "__main__":
     main()
