@@ -6,6 +6,8 @@ import json
 from tqdm import tqdm
 import itertools
 
+from fake_useragent import UserAgent
+
 # Load configuration from config.json
 def load_config(config_file="./config.json"):
     try:
@@ -31,7 +33,7 @@ def generate_random_password(length):
     return ''.join(random.choice(characters) for _ in range(length))
 
 # Send POST requests continuously
-def send_posts(url, names, domains, password_length, email_key, password_key, progress_bar):
+def send_posts(url, names, domains, password_length, email_key, password_key, progress_bar, proxies):
     with requests.Session() as session:
         for _ in progress_bar:
             email = generate_random_email(names, domains)
@@ -41,7 +43,12 @@ def send_posts(url, names, domains, password_length, email_key, password_key, pr
                 password_key: password
             }
             try:
-                response = session.post(url, data=data)
+                ua = UserAgent()
+                user_agent = ua.random
+                headers = {'User-Agent': user_agent}
+                proxy = random.choice(proxies)
+                response = session.post(url, data=data, headers=headers, proxies={"http": f"http://{proxy}"})
+    
                 progress_bar.set_postfix(email=email, status_code=response.status_code)
             except requests.RequestException as e:
                 progress_bar.set_postfix(error=str(e))
@@ -57,17 +64,19 @@ def main():
     domains = config['domain']
     email_key = config['email_key']
     password_key = config['password_key']
+    proxies = config['proxys']
+    data_amount = config['data_amount']  # placebo at the moment, implement latter
 
-    # Determine the total number of requests to be sent (for progress bar)
-    total_requests = config.get('total_requests', 1000)  # Default to 1000 if not specified
+    total_requests = data_amount  # Default to 1000 if not specified
 
+        
     # Use ThreadPoolExecutor to manage threads
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
         # Create a single progress bar for all threads
         with tqdm(total=total_requests, desc="Sending POST requests") as progress_bar:
             progress_bars = itertools.cycle([progress_bar])
             futures = [
-                executor.submit(send_posts, url, names, domains, password_length, email_key, password_key, progress_bar)
+                executor.submit(send_posts, url, names, domains, password_length, email_key, password_key, progress_bar, proxies)
                 for progress_bar in itertools.islice(progress_bars, num_threads)
             ]
             concurrent.futures.wait(futures)

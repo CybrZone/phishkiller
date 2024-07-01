@@ -7,6 +7,7 @@
       "quincy", "ricky", "samuel", "tom", "ulysses", "victor", "wesley", "xavier",
       "yusuf", "zachary"
     ],
+    "proxys": ["1.1.1.1:5000"],
     "password_length": 8,
     "domain": [
         "@icloud.com",
@@ -17,6 +18,7 @@
         
     ],
     "email_key": "a",
-    "password_key": "az"
+    "password_key": "az",
+    "data_amount":500
   }
   
