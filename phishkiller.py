@@ -55,7 +55,7 @@ def generate_random_email():
 
 
 def generate_random_password():  # Generate password using uppercase, lowercase, numbers and special characters
-    characters = string.ascii_letters + string.digits + "@$!%^&*"
+    characters = string.ascii_letters + string.digits + string.punctuation
     length = random.randint(12, 20)  # Random length between 12 and 20
     return "".join(random.choice(characters) for _ in range(length))
 
