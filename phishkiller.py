@@ -5,8 +5,8 @@ import string
 import names
 import logging
 import time
-from emailHosts import email_domains
 from fake_useragent import UserAgent
+from emailHosts import weighted_email_domains
 
 
 # Set up logging
@@ -31,11 +31,26 @@ def name_gen():  # Generates a random name for the email
 def generate_random_email():  # Generate email with combination of name and domain
     name = name_gen()
     NumberOrNo = random.choice(["Number", "No"])
-    domain = random.choice(email_domains)  # 140+ domains
+    
+    # Calculate cumulative weights
+    cumulative_weights = []
+    cumulative_weight = 0
+    for domain, weight in weighted_email_domains:
+        cumulative_weight += weight
+        cumulative_weights.append((domain, cumulative_weight))
+    
+    # Select domain based on cumulative weights
+    random_num = random.randint(1, cumulative_weight)
+    for domain, cumlat_weight in cumulative_weights:
+        if random_num <= cumlat_weight:
+            selected_domain = domain
+            break
+    
     if NumberOrNo == "Number":
-        return name + str(random.randint(1, 100)) + domain
+        return name + str(random.randint(1, 100)) + selected_domain
     else:
-        return name + domain
+        return name + selected_domain
+
 
 
 def generate_random_password():  # Generate password using uppercase, lowercase, numbers and special characters
@@ -87,6 +102,7 @@ def main():
             t.join()
     except Exception as e:
         print(f"Error in main: {e}")
+
 
 
 if __name__ == "__main__":
