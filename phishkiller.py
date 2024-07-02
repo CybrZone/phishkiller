@@ -17,6 +17,10 @@ fake = Faker()
 def add_suffixes(permutated: List[str], suffixes: List[str], service: str) -> List[str]:
     """
     Adds email suffixes and service to permutated usernames.
+    :param permutated: list of email permutation prefixes.
+    :param suffixes: list of email domains.
+    :param service: optional service - gmail allows adding + followed by string after username, ex. test+netflix@gmail.com
+    :return: email permutations with domain suffixes.
     """
     usernames = []
     if len(service):
