@@ -5,7 +5,6 @@ import threading
 from typing import List
 from faker import Faker
 from itertools import permutations
-from permutate import add_suffixes, generate_permutations
 from fake_useragent import UserAgent
 
 
@@ -13,6 +12,18 @@ alphabet = string.ascii_letters + string.digits + string.punctuation
 domains = ['@googlemail.com', "@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com"]
 MAX_THREADS = 8 # Multithreading is not real in python, therefore there's barely any gain from more
 fake = Faker()
+
+
+def add_suffixes(permutated: List[str], suffixes: List[str], service: str) -> List[str]:
+    """
+    Adds email suffixes and service to permutated usernames.
+    """
+    usernames = []
+    if len(service):
+        permutated = [f'{x}+{service}' for x in permutated]
+    for suffix in suffixes:
+        usernames.extend([f'{x}{suffix}' for x in permutated])
+    return usernames
 
 
 def generate_random_emails() -> List[str]:
