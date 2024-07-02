@@ -1,0 +1,3 @@
+fake-useragent
+Faker
+loguru

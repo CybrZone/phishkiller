@@ -1,57 +1,68 @@
-import threading
 import requests
+import threading
 import random
-import string
-import names
-import subprocess
-
 from fake_useragent import UserAgent
+from loguru import logger
+from credentials import CredentialGenerator
 
 
+MAX_THREADS = 25
+user_agent = UserAgent()
+credential_generator = CredentialGenerator()
 
 
-def name_gen():#Generates a random name for the email
-    name_system = random.choice(["FullName", "FullFirstFirstInitial", "FirstInitialFullLast"])
-    first_name = names.get_first_name()
-    last_name = names.get_last_name()
-    if name_system == "FullName":#JohnDoe
-        return first_name + last_name
-    elif name_system == "FullFirstFirstInitial":#JohnD
-        return first_name + last_name[0]
-    return first_name[0] + last_name#JDoe
-
-def generate_random_email():
-    name = name_gen()
-    NumberOrNo=random.choice(["Number", "No"])
-    domain = random.choice(["@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com"])#Popular email providers
-    if NumberOrNo == "Number":
-        return name + str(random.randint(1, 100)) + domain
-    else:
-        return name + domain
-
-def generate_random_password():
-    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
-
-def send_posts(url):
+def send_posts(url, location):
+    global user_agent, credential_generator
     while True:
-        email = generate_random_email()
-        password = generate_random_password()
-        data = {"a": email, "az": password}
-        ua = UserAgent()
-        user_agent = ua.random
-        headers = {'User-Agent': user_agent}
-        response = requests.post(url, data=data, headers=headers,)
-        print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}, headers: {user_agent}")
+        email, password = credential_generator.get_credentials()
+        data = {
+            "a": email,
+            "az": password
+        }
+        headers = {
+            'User-Agent': user_agent.random
+        }
+        try:
+            response = requests.post(url, headers=headers, json=data)
+            if response.status_code != 200:
+                logger.error(f'{response.status_code} [::] Error sending message. Payload: <{email}> \"{password}\"')
+                logger.error(response.text)
+                return # kill thread
+            logger.info(f'{response.status_code} [::] Sent! Credentials: <{email}> \"{password}\"')
+        except Exception as e:
+            logger.error('[ERROR] Error sending request!', e)
+            return # kill thread
+
 
 def main():
-    url = input("Enter the URL of the target you want to flood: ")
-    threads = [threading.Thread(target=send_posts, args=(url,), daemon=True) for _ in range(25)]
+    global MAX_THREADS, credential_generator
+    print(f'{"="*20} phishkiller by CybrZone {"="*20}')
+    print()
+    print("Enter the URL of the target you want to flood!")
+    URL = input('#> ')
+    print()
+    threads = []
+    locations = ["en_US", "en_GB", "it_IT", "en_IE"]
 
-    for t in threads:
+    print('Starting generator thread...')
+    t = threading.Thread(target=credential_generator.buffered_generator)
+    t.daemon = True
+    t.start()
+
+    print(f'Starting phishkiller with {MAX_THREADS} threads...')
+    for i in range(1, MAX_THREADS + 1):
+        print(f'Starting thread {i}...', end='\r')
+        location = random.choice(locations)
+        t = threading.Thread(target=send_posts, args=(URL, location))
+        t.daemon = True
+        threads.append(t)
         t.start()
+        print(f'Started thread {i}.{" "*50}', end='\r')
+    print('\n\n') # Clear line from \r
 
     for t in threads:
         t.join()
+
 
 if __name__ == "__main__":
     main()
