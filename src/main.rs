@@ -11,6 +11,7 @@ mod download_passwords;
 mod download_user_agents;
 mod first_launch;
 
+mod birthday_generator;
 mod mail_generator;
 mod name_generator;
 mod password_generator;
