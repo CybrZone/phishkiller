@@ -11,16 +11,22 @@ Stop phishing
 
 
 ## Phishkiller usage
-Run 
+
+Run
 ```
 python3 phishkiller.py
  ```
- Then paste the url of the target
+ Then paste the url of the target and add the fields.
+
+### Optional
+To hide your ip (you're not safe from feds, but you won't get blocked by the site) you can add proxies to the proxies.txt file. The format is: protocol://(username:password)@ip:port. If you want free premium proxies check out webshare.io (not sponsored, but you get 10 premium proxies for free without a cc)
 
 
  ## To Do List
 
- - Proxy (rotate IP address)
+ - Get method
+ - Checking and removing broken proxies
+ - Automated proxy collection
 
  ### Disclaimer
 **Note:** This script should be used responsibly and only on systems you have explicit permission to test against.
