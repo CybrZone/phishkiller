@@ -23,7 +23,7 @@ def name_gen():#Generates a random name for the email
 def generate_random_email():
     name = name_gen()
     NumberOrNo=random.choice(["Number", "No"])
-    domain = random.choice(["@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com"])#Popular email providers
+    domain = random.choice(["@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com", "@hotmail.com", "@yandex.com", "@wp.pl"])#Popular email providers
     if NumberOrNo == "Number":
         return name + str(random.randint(1, 100)) + domain
     else:
