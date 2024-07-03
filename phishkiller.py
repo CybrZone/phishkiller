@@ -6,7 +6,7 @@ import names
 import logging
 import time
 from fake_useragent import UserAgent
-from emailHosts import weighted_email_domains
+from Assets.emailHosts import weighted_email_domains
 
 
 # Set up logging
