@@ -35,6 +35,6 @@ def get_proxies():
     return proxies
 
 if __name__ == "__main__":
-    proxies = get_proxy()
+    proxies = get_proxies()
     for proxy in proxies:
         print(proxy)
