@@ -74,6 +74,8 @@ def main():
         proxies = []
     if len(proxies) == 1:
         print("Successfully loaded 1 proxy")
+    elif len(proxies) == 0:
+        print(Running without proxies")
     else:
         print(f"Successfully loaded {len(proxies)} proxies")
     print(f"Url: {url}")
