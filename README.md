@@ -12,15 +12,14 @@ Stop phishing
 
 ## Phishkiller usage
 
-### Optional
-To hide your ip (you're not safe from feds, but you won't get blocked by the site) you can add proxies to the proxies.txt file. The format is: protocol://(username:password)@ip:port. If you want free premium proxies check out webshare.io (not sponsored, but you get 10 premium proxies for free without a cc)
-
-### Mandatory
 Run
 ```
 python3 phishkiller.py
  ```
  Then paste the url of the target and add the fields.
+
+### Optional
+To hide your ip (you're not safe from feds, but you won't get blocked by the site) you can add proxies to the proxies.txt file. The format is: protocol://(username:password)@ip:port. If you want free premium proxies check out webshare.io (not sponsored, but you get 10 premium proxies for free without a cc)
 
 
  ## To Do List
