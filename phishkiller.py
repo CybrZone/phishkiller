@@ -1,36 +1,29 @@
 import threading
 import requests
 import random
-import string
-import names
-import subprocess
 
 from fake_useragent import UserAgent
+from faker import Faker
 
+# Fake information generator from many different languages to disguise requests
+fake = Faker(['it_IT', 'en_US', 'ja_JP', 'fr_FR', 'de_DE', 'es_ES'])
 
 
 
 def name_gen():#Generates a random name for the email
-    name_system = random.choice(["FullName", "FullFirstFirstInitial", "FirstInitialFullLast"])
-    first_name = names.get_first_name()
-    last_name = names.get_last_name()
-    if name_system == "FullName":#JohnDoe
-        return first_name + last_name
-    elif name_system == "FullFirstFirstInitial":#JohnD
-        return first_name + last_name[0]
-    return first_name[0] + last_name#JDoe
+    return fake.user_name()
 
 def generate_random_email():
     name = name_gen()
     NumberOrNo=random.choice(["Number", "No"])
-    domain = random.choice(["@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com"])#Popular email providers
+    domain = random.choice(["@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com", "@hotmail.com", "@icloud.com"])#Popular email providers
     if NumberOrNo == "Number":
         return name + str(random.randint(1, 100)) + domain
     else:
         return name + domain
 
 def generate_random_password():
-    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
+    return fake.password() 
 
 def send_posts(url):
     while True:
@@ -53,5 +46,7 @@ def main():
     for t in threads:
         t.join()
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
+
+name_gen()
