@@ -46,7 +46,5 @@ def main():
     for t in threads:
         t.join()
 
-# if __name__ == "__main__":
-#     main()
-
-name_gen()
+if __name__ == "__main__":
+    main()
