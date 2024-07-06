@@ -4,11 +4,14 @@
 This script is designed to combat phishing attacks by flooding phisher databases with false information by flooding attacker database.
 
 ## How It Works
-Using multi-threading, the script generates random email addresses and passwords from a predefined list of names. Each thread independently sends POST requests to a specified URL, submitting fictitious data to overwhelm phisher databases. This proactive approach aims to dilute and disrupt the accuracy of stolen data, offering a layer of protection to potential victims.
+Using multiprocessing and asyncio, the script generates random email addresses and passwords from a predefined list of names. Each process has an event loop, which independently sends POST requests to a specified URL, submitting fictitious data to overwhelm phisher databases. This proactive approach aims to dilute and disrupt the accuracy of stolen data, offering a layer of protection to potential victims.
 
 ## Purpose
 Stop phishing
 
+
+## Install
+Run `pip install -r requirements.txt`
 
 ## Phishkiller usage
 Run 
