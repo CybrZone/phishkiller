@@ -1,5 +1,5 @@
 import ui
-import eaupy as bp
+import beaupy as bp
 
 def main():
     ui.show()
