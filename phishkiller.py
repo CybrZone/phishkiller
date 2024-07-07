@@ -7,6 +7,7 @@ import logging
 import time
 from fake_useragent import UserAgent
 from Assets.emailHosts import weighted_email_domains
+from ip_changer import initialize_tornet, create_tor_session, whats_my_ip, start_ip_changer
 
 
 # Set up logging
@@ -60,50 +61,64 @@ def generate_random_password():  # Generate password using uppercase, lowercase,
     return "".join(random.choice(characters) for _ in range(length))
 
 
-def send_posts(url):
+def send_posts(url, session, num_posts_per_ip_change):
+    current_ip = whats_my_ip()
     while True:
-        try:
-            email = generate_random_email()
-            password = generate_random_password()
-            data = {"a": email, "az": password}
-            ua = UserAgent()
-            user_agent = ua.random
-            headers = {"User-Agent": user_agent}
-
-            response = requests.post(url, data=data, headers=headers)
-            logging.info(
-                f"Email: {email}, Password: {password}, Status Code: {response.status_code}, User-Agent: {user_agent}"
-            )
-
-            if response.status_code != 200:
-                logging.error(f"Error: Received status code {response.status_code}")
-                time.sleep(random.uniform(1, 5))  # Random delay between 1 and 5 seconds
-
-        except requests.RequestException as e:
-            logging.error(f"Request failed: {e}")
-            time.sleep(5)  # Wait for 5 seconds before retrying
-            
-        except Exception as e:
-            logging.error(f"An unexpected error occurred: {e}")
-            time.sleep(5)  # Wait for 5 seconds before retrying
-
+        if num_posts_per_ip_change == 1:
+            new_ip = whats_my_ip()
+            while new_ip == current_ip:
+                time.sleep(1)
+                new_ip = whats_my_ip()
+            current_ip = new_ip
+        
+        email = generate_random_email()
+        password = generate_random_password()
+        data = {"a": email, "az": password}
+        ua = UserAgent()
+        user_agent = ua.random
+        headers = {'User-Agent': user_agent}
+        response = session.post(url, data=data, headers=headers)
+        logging.info(
+            f"Email: {email}, Password: {password}, Status Code: {response.status_code}, User-Agent: {user_agent}, IP: {current_ip}"
+        )
+        
+        if num_posts_per_ip_change == 2:
+            time.sleep(random.randint(5, 120))  # Random delay between 5 seconds and 2 minutes
+        time.sleep(1)  # General delay to allow IP change
 
 def main():
+    initialize_tornet()
+    
     url = input("Enter the URL of the target you want to flood: ")
-    try:
-        threads = [
-            threading.Thread(target=send_posts, args=(url,), daemon=True)
-            for _ in range(25)
-        ]
-
+    
+    while True:
+        try:
+            choice = int(input("Choose an option:\n1. Send 1 post per IP change\n2. Send 25 posts per IP change\n3. Send posts at random intervals between 5 seconds and 2 minutes\nEnter your choice: "))
+            if choice not in [1, 2, 3]:
+                print("Invalid choice. Please enter 1, 2, or 3.")
+                continue
+            break
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+            
+    ip_changer_thread = threading.Thread(target=start_ip_changer, daemon=True)
+    ip_changer_thread.start()
+    
+    session = create_tor_session()
+    
+    if choice == 1:
+        posting_thread = threading.Thread(target=send_posts, args=(url, session, 1), daemon=True)
+        posting_thread.start()
+    elif choice == 2:
+        threads = [threading.Thread(target=send_posts, args=(url, session, 0), daemon=True) for _ in range(25)]
         for t in threads:
             t.start()
+    elif choice == 3:
+        posting_thread = threading.Thread(target=send_posts, args=(url, session, 2), daemon=True)
+        posting_thread.start()
 
-        for t in threads:
-            t.join()
-    except Exception as e:
-        print(f"Error in main: {e}")
-
+    while True:
+        time.sleep(1)
 
 if __name__ == "__main__":
     main()
