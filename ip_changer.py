@@ -1,7 +1,4 @@
-import threading
-import time
 import requests
-import random
 
 from tornet import ma_ip, initialize_environment, change_ip_repeatedly
 

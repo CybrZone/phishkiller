@@ -7,6 +7,7 @@ import logging
 import time
 from fake_useragent import UserAgent
 from Assets.emailHosts import weighted_email_domains
+from ip_changer import initialize_tornet, create_tor_session, whats_my_ip, start_ip_changer
 
 
 # Set up logging
