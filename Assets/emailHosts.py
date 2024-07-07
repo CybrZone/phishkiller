@@ -451,7 +451,7 @@ weighted_email_domains = [
 ("@twitter.co.uk", 7),
 ("@twitter.com", 150),
 ("@twnic.net", 15),
-("@uber.co.uk", 8)
+("@uber.co.uk", 8),
 ("@uber.com", 20),
 ("@ubisoft.com", 15),
 ("@udemy.com", 15),
