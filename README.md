@@ -17,7 +17,7 @@ The primary goal of PhishKiller is to combat phishing attacks by flooding attack
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/PhishKiller.git
+   git clone https://github.com/CybrZone/phishkiller
    cd PhishKiller
 2. **install dependencies:**
 
