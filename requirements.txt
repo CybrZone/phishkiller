@@ -2,9 +2,11 @@ beaupy==3.8.3
 certifi==2024.7.4
 charset-normalizer==3.3.2
 emoji==2.12.1
+fake-useragent==1.5.1
 idna==3.7
 markdown-it-py==3.0.0
 mdurl==0.1.2
+names==0.3.0
 Pygments==2.18.0
 python-yakh==0.3.2
 questo==0.2.3
