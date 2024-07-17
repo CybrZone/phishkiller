@@ -3,8 +3,6 @@ import threading
 import time
 import sys
 import random
-import names
-import string
 from Assets.emailHosts import weighted_email_domains
 from Scripts.ip_changer import whats_my_ip, initialize_tornet, create_tor_session, start_ip_changer
 from fp.fp import FreeProxy

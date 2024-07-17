@@ -1,5 +1,4 @@
 requests
-names
 tornet
-faker
-fp.fp
+Faker
+free-proxy
