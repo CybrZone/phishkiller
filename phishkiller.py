@@ -87,9 +87,36 @@ def generate_random_email():
 def generate_random_password():
     return fake.password() 
 
-def func_attack(urlu, email, password, session, num_posts_per_ip_change): # Sends a POST request to the target URL with the email and password
+def generate_card_expire():
+    return fake.credit_card_expire()
+
+def generate_card_number():
+    return fake.credit_card_number()
+
+def generate_card_cvv():
+    return fake.credit_card_security_code()
+
+def generate_card_type():
+    return fake.credit_card_provider()
+
+def func_attack(urlu, email, password, card_type, card_number, card_expiry, card_cvv, session, num_posts_per_ip_change): # Sends a POST request to the target URL with the email and password
     url = urlu
-    data = {'ai': email, 'namep': password}
+    
+    #data-credit-card
+    data = {
+      "captcha":"",
+      "step":"cc",
+      "datatransTrxId":"fOc93IX31QADM6HsB7VSOa5uKW2S",
+      "pmethod":card_type,
+      "expy":"",
+      "expm":"",
+      "one":card_number,
+      "exp":card_expiry,
+      "cvv":card_cvv
+    } 
+    
+    #data-email
+    #data = {'ai': email, 'namep': password}
     
     try:
         current_ip = whats_my_ip()
@@ -164,6 +191,10 @@ if __name__ == "__main__":
         # Generate random email and password
         random_email = generate_random_email()
         random_password = generate_random_password()
+        random_card_type = generate_card_type()
+        random_card_number = generate_card_number()
+        random_card_expiry = generate_card_expire()
+        random_card_cvv = generate_card_cvv()
         
         print(f"Email: {random_email}, Password: {random_password}")
 
@@ -171,14 +202,14 @@ if __name__ == "__main__":
         session = create_tor_session()
 
         if choice == 1:
-            posting_thread = threading.Thread(target=func_attack, args=(url, random_email, random_password, session, 1), daemon=True)
+            posting_thread = threading.Thread(target=func_attack, args=(url, random_email, random_password, random_card_type, random_card_number, random_card_expiry, random_card_cvv, session, 1), daemon=True)
             posting_thread.start()
         elif choice == 2:
-            threads = [threading.Thread(target=func_attack, args=(url, random_email, random_password, session, 0), daemon=True) for _ in range(25)]
+            threads = [threading.Thread(target=func_attack, args=(url, random_email, random_password, random_card_type, random_card_number, random_card_expiry, random_card_cvv, session, 0), daemon=True) for _ in range(25)]
             for t in threads:
                 t.start()
         elif choice == 3:
-            posting_thread = threading.Thread(target=func_attack, args=(url, random_email, random_password, session, 2), daemon=True)
+            posting_thread = threading.Thread(target=func_attack, args=(url, random_email, random_password, random_card_type, random_card_number, random_card_cvv, session, 2), daemon=True)
             posting_thread.start()
 
         time.sleep(1)
