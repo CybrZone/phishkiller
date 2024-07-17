@@ -104,10 +104,12 @@ def func_attack(urlu, email, password, session, num_posts_per_ip_change): # Send
 
         get_agents = func_get_random_user_agent(user_agents)
         headers = {'User-Agent': get_agents}
+        print(f"Sending : {get_agents[:50]} ...")
         get_proxy = generate_proxy()
         proxy = {"http": get_proxy, "https": get_proxy}
+        print(f"Sending : {get_proxy[:50]} ...")
         response = session.post(url, data=data, proxies=proxy, headers=headers)
-        print(f"Email: {random_email}, Password: {random_password}, Status Code: {response.status_code}, headers: {user_agents}, proxy: {proxy}")
+        print(f"Status code: {response.status_code}")
 
         if num_posts_per_ip_change == 2:
             time.sleep(random.randint(5, 120))  # Random delay between 5 seconds and 2 minutes
@@ -164,6 +166,7 @@ if __name__ == "__main__":
         # Generate random email and password
         random_email = generate_random_email()
         random_password = generate_random_password()
+        print(f"Email: {random_email}, Password: {random_password}, Status Code: {session.status_code}, headers: {user_agents}, proxy: {proxy}")
 
         # Send request
         session = create_tor_session()
