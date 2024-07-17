@@ -185,7 +185,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     cycle_count = 0
-    max_cycles = 5
+    max_cycles = 1000
 
     while cycle_count < max_cycles: # Run 5 cycles
         # Generate random email and password
