@@ -7,6 +7,11 @@ import names
 import string
 from Assets.emailHosts import weighted_email_domains
 from ip_changer import whats_my_ip, initialize_tornet, create_tor_session, start_ip_changer
+from fp.fp import FreeProxy
+from faker import Faker
+
+# Fake information generator from many different languages to disguise requests
+fake = Faker(['it_IT', 'en_US', 'ja_JP', 'fr_FR', 'de_DE', 'es_ES'])
 
 def func_fetch_user_agents(url): # Fetches user agents from the URL and returns a list of user agents
     try:
@@ -37,11 +42,15 @@ def func_get_user_agents(): # Fetches user agents from the URLs and returns a li
 def func_get_random_user_agent(user_agents): # Returns a random user agent from the list
     return random.choice(user_agents)
 
-proxies = {'http': 'socks5h://127.0.0.1:9050', 'https': 'socks5h://127.0.0.1:9050'}
+def generate_proxy():
+    return FreeProxy(rand=True).get()
 
+get_proxy = generate_proxy()
+proxy = {"http": get_proxy, "https": get_proxy}
+    
 def func_get_public_ip(): # Fetches the public IP address of the machine
     try:
-        response = requests.get('https://icanhazip.com', proxies=proxies, headers={'User-Agent': func_get_random_user_agent(user_agents)})
+        response = requests.get('https://icanhazip.com', proxies=proxy, headers={'User-Agent': func_get_random_user_agent(user_agents)})
         if response.status_code == 200:
             return response.text.strip()
         else:
@@ -52,22 +61,12 @@ def func_get_public_ip(): # Fetches the public IP address of the machine
         return None
 
 def name_gen():  # Generates a random name for the email
-    name_system = random.choice(
-        ["FullName", "FullFirstFirstInitial", "FirstInitialFullLast"]
-    )
-    first_name = names.get_first_name()
-    last_name = names.get_last_name()
-    if name_system == "FullName":  # JohnDoe
-        return first_name + last_name
-    elif name_system == "FullFirstFirstInitial":  # JohnD
-        return first_name + last_name[0]
-    return first_name[0] + last_name  # JDoe
+    return fake.user_name()
 
 def generate_random_email():
-    # Generate email with combination of name and domain
     name = name_gen()
-    use_number = random.choice([True, False])  # Renamed for clarity
-    
+    NumberOrNo=random.choice(["Number", "No"])
+     
     # Calculate cumulative weights
     cumulative_weights = []
     total_weight = 0
@@ -82,17 +81,13 @@ def generate_random_email():
             selected_domain = domain
             break
     
-    # Generate email with or without a number
-    if use_number:
-        return f"{name}{random.randint(1, 100)}{selected_domain}"
+    if NumberOrNo == "Number":
+        return name + str(random.randint(1, 100)) + selected_domain
     else:
-        return f"{name}{selected_domain}"
+        return name + selected_domain
 
-
-def generate_random_password():  # Generate password using uppercase, lowercase, numbers and special characters
-    characters = string.ascii_letters + string.digits + string.punctuation
-    length = random.randint(12, 20)  # Random length between 12 and 20
-    return "".join(random.choice(characters) for _ in range(length))
+def generate_random_password():
+    return fake.password() 
 
 def func_attack(urlu, email, password, session, num_posts_per_ip_change): # Sends a POST request to the target URL with the email and password
     url = urlu
@@ -109,9 +104,10 @@ def func_attack(urlu, email, password, session, num_posts_per_ip_change): # Send
 
         get_agents = func_get_random_user_agent(user_agents)
         headers = {'User-Agent': get_agents}
-        print(f"Sending : {get_agents[:50]} ...")
-        response = session.post(url, data=data, proxies=proxies, headers=headers)
-        print(f"Status code: {response.status_code}")
+        get_proxy = generate_proxy()
+        proxy = {"http": get_proxy, "https": get_proxy}
+        response = session.post(url, data=data, proxies=proxy, headers=headers)
+        print(f"Email: {random_email}, Password: {random_password}, Status Code: {response.status_code}, headers: {user_agents}, proxy: {proxy}")
 
         if num_posts_per_ip_change == 2:
             time.sleep(random.randint(5, 120))  # Random delay between 5 seconds and 2 minutes
@@ -168,7 +164,6 @@ if __name__ == "__main__":
         # Generate random email and password
         random_email = generate_random_email()
         random_password = generate_random_password()
-        print(f"Sending : {random_email[:50]} , {random_password[:50]} ...")
 
         # Send request
         session = create_tor_session()
