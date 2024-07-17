@@ -103,7 +103,7 @@ def func_attack(urlu, email, password, card_type, card_number, card_expiry, card
     url = urlu
     
     #data-credit-card
-    data = {
+    """data = {
       "captcha":"",
       "step":"cc",
       "datatransTrxId":"fOc93IX31QADM6HsB7VSOa5uKW2S",
@@ -113,10 +113,10 @@ def func_attack(urlu, email, password, card_type, card_number, card_expiry, card
       "one":card_number,
       "exp":card_expiry,
       "cvv":card_cvv
-    } 
+    }"""
     
     #data-email
-    #data = {'ai': email, 'namep': password}
+    data = {'email': email, 'password': password}
     
     try:
         current_ip = whats_my_ip()
