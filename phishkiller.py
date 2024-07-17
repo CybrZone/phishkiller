@@ -6,7 +6,7 @@ import random
 import names
 import string
 from Assets.emailHosts import weighted_email_domains
-from ip_changer import whats_my_ip, initialize_tornet, create_tor_session, start_ip_changer
+from Scripts.ip_changer import whats_my_ip, initialize_tornet, create_tor_session, start_ip_changer
 from fp.fp import FreeProxy
 from faker import Faker
 
