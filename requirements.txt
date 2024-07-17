@@ -1,7 +1,3 @@
 requests
-threading
-random
-string
 names
-time
 tornet
