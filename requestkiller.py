@@ -166,7 +166,7 @@ if __name__ == "__main__":
         # Generate random email and password
         random_email = generate_random_email()
         random_password = generate_random_password()
-        print(f"Email: {random_email}, Password: {random_password}")
+        print(f"Email: {random_email}, Password: {random_password} lalla")
 
         # Send request
         session = create_tor_session()
