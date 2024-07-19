@@ -21,9 +21,20 @@ python3 phishkiller.py
  Then paste the url of the target
 
 
- ## To Do List
+ ## Recent Imrpovements
 
- - Proxy (rotate IP address)
+ - Advanced Strategies & Error Handling - https://github.com/HarryJamesGreen
+ - Password Length Randomization - https://github.com/B1GBOOM420
+ - Licence - https://github.com/lp-pinkk
+ - Random Generation & Refactor - https://github.com/mela-nen
+ - Creation Of This Amazing Community Project - https://github.com/CybrZone
+
+
+
+## TODO
+
+    - Proxies
+
 
  ### Disclaimer
-**Note:** This script should be used responsibly and only on systems you have explicit permission to test against.
+**Note:** This code is for educational and testing purposes only, and should not be used for any malicious or illegal activities. Using this code for any unauthorized purpose may violate the terms of service of the target website, as well as local and international laws. The use of this code is entirely at your own risk, and the author and contributors are not responsible for any misuse or consequences arising from its use.
