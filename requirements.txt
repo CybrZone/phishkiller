@@ -1,8 +1,8 @@
-threading
+thread6
 requests
-random
-string
+random2
 names
 logging
-time
 fake_useragent
+typer
+colorama
